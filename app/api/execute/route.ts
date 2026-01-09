@@ -1,80 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-const CODE_EXECUTOR_URL = 'https://code-executor.24rtt3srkwax.us-south.codeengine.appdomain.cloud';
-
-interface ExecutionRequest {
-  code: string;
-  language?: string;
-  timeout?: number;
-}
-
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { code, language = 'python', timeout = 30 } = await request.json() as ExecutionRequest;
+    const { code } = await req.json();
     
-    // Validate input
-    if (!code || !code.trim()) {
-      return NextResponse.json(
-        { error: 'Code is required' },
-        { status: 400 }
-      );
-    }
-    
-    if (language !== 'python') {
-      return NextResponse.json(
-        { error: 'Only Python is supported currently' },
-        { status: 400 }
-      );
-    }
-    
-    // Call the code executor microservice
-    const response = await fetch(`${CODE_EXECUTOR_URL}/execute`, {
+    // YOUR UNIQUE LIVE IBM URL
+    const IBM_EXECUTOR_URL = "https://executor-app.24rtt3srkwax.us-south.codeengine.appdomain.cloud/execute";
+
+    console.log("🚀 Bridge: Forwarding code to IBM Cloud...");
+
+    const response = await fetch(IBM_EXECUTOR_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code, timeout }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, timeout: 30 })
     });
-    
-    if (!response.ok) {
-      throw new Error(`Executor responded with ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
-    return NextResponse.json(result);
-    
-  } catch (error: any) {
-    console.error('Code execution error:', error);
-    return NextResponse.json(
-      { 
-        status: 'error',
-        error: error.message || 'Code execution failed',
-        output: '',
-        executionTime: 0
-      },
-      { status: 500 }
-    );
-  }
-}
 
-// Health check endpoint
-export async function GET() {
-  try {
-    // Check if executor is healthy
-    const response = await fetch(`${CODE_EXECUTOR_URL}/health`);
-    const health = await response.json();
-    
-    return NextResponse.json({
-      status: 'ok',
-      executor: CODE_EXECUTOR_URL,
-      executorHealth: health
-    });
+    const result = await response.json();
+    return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({
-      status: 'error',
-      executor: CODE_EXECUTOR_URL,
-      error: 'Cannot reach executor'
-    });
+    console.error("❌ Bridge Error:", error);
+    return NextResponse.json({ status: 'error', error: 'Could not reach IBM' }, { status: 500 });
   }
 }

@@ -1,0 +1,297 @@
+/**
+ * GenAI Labs - Video Sync Styles
+ * Enhanced overlay and practice notifications
+ */
+
+/* ========================================
+   PRACTICE NOTIFICATION
+   ======================================== */
+
+.genai-practice-notification {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 40px rgba(102, 126, 234, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  max-width: 420px;
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transform: translateX(500px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.genai-practice-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.genai-notification-content {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.genai-notification-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.genai-notification-text {
+  flex: 1;
+}
+
+.genai-notification-text h4 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.genai-notification-topic {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.genai-notification-subtitle {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.genai-notification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.genai-btn-primary,
+.genai-btn-secondary {
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.genai-btn-primary {
+  background: white;
+  color: #667eea;
+}
+
+.genai-btn-primary:hover {
+  background: #f7f7f7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.genai-btn-secondary {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.genai-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ========================================
+   ENHANCED OVERLAY
+   ======================================== */
+
+.genai-practice-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.genai-loading {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.genai-lab-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.genai-lab-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.genai-lab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.genai-lab-number {
+  background: white;
+  color: #667eea;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.genai-lab-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.genai-lab-badge-beginner {
+  background: rgba(52, 211, 153, 0.2);
+  color: #10b981;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.genai-lab-badge-intermediate {
+  background: rgba(251, 191, 36, 0.2);
+  color: #f59e0b;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.genai-lab-badge-advanced {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.genai-lab-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: white;
+}
+
+.genai-lab-topic {
+  font-size: 13px;
+  opacity: 0.85;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.genai-lab-time {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.genai-time-badge,
+.genai-timestamp-badge {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.genai-lab-start-btn {
+  width: 100%;
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.genai-lab-start-btn:hover {
+  background: #f7f7f7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .genai-practice-notification {
+    bottom: 20px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+
+  .genai-notification-actions {
+    flex-direction: row;
+  }
+
+  .genai-btn-primary,
+  .genai-btn-secondary {
+    flex: 1;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(500px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.genai-lab-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.genai-lab-card:nth-child(1) { animation-delay: 0.1s; }
+.genai-lab-card:nth-child(2) { animation-delay: 0.2s; }
+.genai-lab-card:nth-child(3) { animation-delay: 0.3s; }
+.genai-lab-card:nth-child(4) { animation-delay: 0.4s; }
+.genai-lab-card:nth-child(5) { animation-delay: 0.5s; }
