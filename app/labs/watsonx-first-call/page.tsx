@@ -28,37 +28,33 @@ In this lab, you'll learn how to:
 - API Key and Project ID are provided below
 - watsonx.ai documentation: https://ibm.com/docs/watsonx
 `,
-  starterCode: `from ibm_watsonx_ai.foundation_models import Model
+starterCode: `from ibm_watsonx_ai.foundation_models import Model
+import os
 
-# Step 1: Setup your credentials
-# These are provided in the Lab Resources panel
-api_key = "YOUR_API_KEY_HERE"
-project_id = "lab-watsonx-first-call"
+# Credentials are automatically provided by the environment
+api_key = os.environ.get('WATSONX_API_KEY')
+project_id = os.environ.get('WATSONX_PROJECT_ID')
+url = os.environ.get('WATSONX_URL')
 
-# Step 2: Initialize the model
-# TODO: Complete the model initialization
+print("🔧 Initializing watsonx.ai model...")
+
+# Initialize the model with IBM Granite 3
 model = Model(
-    model_id="___",  # Hint: Use "ibm/granite-13b-chat-v2"
-    credentials={
-        "apikey": api_key,
-        "url": "https://us-south.ml.cloud.ibm.com"
-    },
+    model_id="ibm/granite-3-8b-instruct",
+    credentials={"apikey": api_key, "url": url},
     project_id=project_id
 )
 
-# Step 3: Create your first prompt
-# TODO: Write a prompt asking "What is artificial intelligence?"
-prompt = "___"
+print("✅ Model initialized successfully!")
 
-# Step 4: Generate text
-# TODO: Call the generate_text method
-response = model.___(___)
+# Create a prompt
+prompt = "What is artificial intelligence?"
 
-# Step 5: Print the result
-print("AI Response:", response)
-`,
-}
+print("💭 Generating response...")
 
-export default function WatsonxFirstCallLab() {
-  return <LabRunner labData={labData} />
-}
+# Generate text
+response = model.generate_text(prompt=prompt)
+
+print("\\n🤖 AI Response:")
+print(response)
+`
