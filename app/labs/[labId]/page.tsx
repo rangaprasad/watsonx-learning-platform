@@ -219,7 +219,7 @@ export default function LabPage({ params, searchParams }: PageProps) {
     title: section.title,
     fullTitle: labTemplate.title,
     difficulty: labTemplate.difficulty,
-    platform: labTemplate.platform,
+    platform: (labTemplate.platform as 'watsonx' | 'bedrock'),
     description: section.description,
     starterCode: section.starterCode,
     videoId: videoId || null,
