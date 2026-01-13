@@ -39,7 +39,7 @@ const LABS_DATABASE = {
 # TODO: Create a bedrock-runtime client for the us-east-1 region
 bedrock = None
 
-print("✅ Bedrock client initialized!")
+print("Bedrock client initialized!")
 print(f"Client type: {type(bedrock)}")
 `
       },
@@ -85,7 +85,7 @@ response = bedrock.invoke_model(
     body=request_body
 )
 
-print("✅ API call successful!")
+print("API call successful!")
 print(f"Response: {response}")
 `
       },
@@ -128,7 +128,7 @@ response_body = json.loads(response['body'].read())
 # Hint: response_body['content'][0]['text']
 generated_text = "___"
 
-print("🤖 AI Response:")
+print("AI Response:")
 print(generated_text)
 `
       }
@@ -156,7 +156,7 @@ print(generated_text)
 **Success criteria:**
 - Model initializes successfully
 - You receive real AI-generated text`,
-starterCode: `from ibm_watsonx_ai.foundation_models import Model
+        starterCode: `from ibm_watsonx_ai.foundation_models import Model
 import os
 
 # Credentials are provided automatically
@@ -164,7 +164,7 @@ api_key = os.environ.get('WATSONX_API_KEY')
 project_id = os.environ.get('WATSONX_PROJECT_ID')
 url = os.environ.get('WATSONX_URL')
 
-print("🔧 Initializing model...")
+print("Initializing model...")
 
 # Initialize the model
 model = Model(
@@ -173,12 +173,84 @@ model = Model(
     project_id=project_id
 )
 
-print("✅ Model ready!")
+print("Model ready!")
 
 # Generate text
 prompt = "What is artificial intelligence?"
 response = model.generate_text(prompt=prompt)
 
-print("\\n🤖 AI Response:")
+print("\\nAI Response:")
 print(response)
 `
+      }
+    ]
+  }
+};
+
+interface PageProps {
+  params: {
+    labId: string;
+  };
+  searchParams: {
+    videoId?: string;
+    timestamp?: string;
+    topic?: string;
+  };
+}
+
+export default function LabPage({ params, searchParams }: PageProps) {
+  const { labId } = params;
+  const { videoId, timestamp, topic } = searchParams;
+
+  // Get lab from database
+  const labTemplate = LABS_DATABASE[labId as keyof typeof LABS_DATABASE];
+  
+  if (!labTemplate) {
+    notFound();
+  }
+
+  // Determine which section to show based on timestamp
+  const currentTimestamp = timestamp ? parseInt(timestamp) : 0;
+  const section = getAppropriateSection(labTemplate.sections, currentTimestamp);
+
+  // Build lab data for LabRunner
+  const labData = {
+    id: labTemplate.id,
+    title: section.title,
+    fullTitle: labTemplate.title,
+    difficulty: labTemplate.difficulty,
+    platform: labTemplate.platform,
+    description: section.description,
+    starterCode: section.starterCode,
+    videoId: videoId || null,
+    timestamp: currentTimestamp,
+    topic: topic || null,
+    sectionNumber: labTemplate.sections.indexOf(section) + 1,
+    totalSections: labTemplate.sections.length
+  };
+
+  return <LabRunner labData={labData} />;
+}
+
+/**
+ * Get the appropriate lab section based on video timestamp
+ */
+function getAppropriateSection(sections: any[], timestamp: number) {
+  // Find section whose time range includes the timestamp
+  const matchingSection = sections.find(section => {
+    const [start, end] = section.timeRange;
+    return timestamp >= start && timestamp < end;
+  });
+
+  // Default to first section if no match
+  return matchingSection || sections[0];
+}
+
+/**
+ * Generate static paths for common labs
+ */
+export async function generateStaticParams() {
+  return Object.keys(LABS_DATABASE).map(labId => ({
+    labId
+  }));
+}

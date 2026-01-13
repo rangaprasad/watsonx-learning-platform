@@ -1,11 +1,25 @@
 import LabRunner from '@/components/LabRunner'
 
-const labData = {
-  id: 'watsonx-first-call',
-  title: 'Your First watsonx.ai API Call',
-  difficulty: 'beginner',
-  platform: 'watsonx' as const,
-  description: `
+interface PageProps {
+  searchParams: {
+    videoId?: string
+    timestamp?: string
+    topic?: string
+  }
+}
+
+export default function WatsonxFirstCallPage({ searchParams }: PageProps) {
+  // Read URL parameters
+  const videoId = searchParams.videoId || null
+  const timestamp = searchParams.timestamp ? parseInt(searchParams.timestamp) : undefined
+  const topic = searchParams.topic || null
+
+  const labData = {
+    id: 'watsonx-first-call',
+    title: 'Your First watsonx.ai API Call',
+    difficulty: 'beginner' as const,
+    platform: 'watsonx' as const,
+    description: `
 Welcome to your first hands-on lab with IBM watsonx.ai!
 
 In this lab, you'll learn how to:
@@ -15,9 +29,9 @@ In this lab, you'll learn how to:
 4. Understand the response structure
 
 **Steps:**
-1. Complete the TODO sections in the code
-2. Click "Run Code" to execute
-3. Check the output matches expected results
+1. Click "Run Code" to execute
+2. Check the output for AI-generated text
+3. Experiment with different prompts
 
 **Success Criteria:**
 - Model initialization successful
@@ -25,18 +39,18 @@ In this lab, you'll learn how to:
 - No errors in output
 
 **Resources:**
-- API Key and Project ID are provided below
+- API Key and Project ID are provided automatically
 - watsonx.ai documentation: https://ibm.com/docs/watsonx
 `,
-starterCode: `from ibm_watsonx_ai.foundation_models import Model
+    starterCode: `from ibm_watsonx_ai.foundation_models import Model
 import os
 
-# Credentials are automatically provided by the environment
+# Credentials are provided automatically
 api_key = os.environ.get('WATSONX_API_KEY')
 project_id = os.environ.get('WATSONX_PROJECT_ID')
 url = os.environ.get('WATSONX_URL')
 
-print("🔧 Initializing watsonx.ai model...")
+print("Initializing watsonx.ai model...")
 
 # Initialize the model with IBM Granite 3
 model = Model(
@@ -45,16 +59,26 @@ model = Model(
     project_id=project_id
 )
 
-print("✅ Model initialized successfully!")
+print("Model initialized successfully!")
 
 # Create a prompt
 prompt = "What is artificial intelligence?"
 
-print("💭 Generating response...")
+print("Generating response...")
 
 # Generate text
 response = model.generate_text(prompt=prompt)
 
-print("\\n🤖 AI Response:")
+print("\\nAI Response:")
 print(response)
-`
+`,
+    // Pass video context to LabRunner
+    videoId: videoId,
+    timestamp: timestamp,
+    topic: topic,
+    sectionNumber: 1,
+    totalSections: 1
+  }
+
+  return <LabRunner labData={labData} />
+}

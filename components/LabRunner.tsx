@@ -1,10 +1,10 @@
 /**
- * Enhanced LabRunner Component
+ * Enhanced LabRunner Component with Reverse Sync
  * 
  * Includes:
  * - Video context display
  * - Section progress
- * - Continue video button
+ * - Continue video button WITH REVERSE SYNC
  * - Timestamp awareness
  */
 
@@ -63,16 +63,16 @@ export default function LabRunner({ labData }: LabRunnerProps) {
       if (result.status === 'success') {
         setOutput(result.output || 'Code executed successfully (no output)')
       } else if (result.status === 'error') {
-        setOutput(`❌ Error:\n${result.error}`)
+        setOutput(`Error:\n${result.error}`)
       } else if (result.status === 'timeout') {
-        setOutput(`⏱️ Timeout: Code execution exceeded 30 seconds`)
+        setOutput(`Timeout: Code execution exceeded 30 seconds`)
       } else {
         setOutput(`Unknown result: ${JSON.stringify(result)}`)
       }
       
       setValidationResult(result.validation || null)
     } catch (error) {
-      setOutput(`❌ Network Error: ${error instanceof Error ? error.message : 'Unknown error'}\n\nMake sure the API is running.`)
+      setOutput(`Network Error: ${error instanceof Error ? error.message : 'Unknown error'}\n\nMake sure the API is running.`)
     } finally {
       setIsRunning(false)
     }
@@ -88,12 +88,39 @@ export default function LabRunner({ labData }: LabRunnerProps) {
   const handleContinueVideo = () => {
     if (!labData.videoId) return
     
-    // Open YouTube with timestamp
     const currentTimestamp = labData.timestamp || 0
     const resumeTimestamp = currentTimestamp + 30 // Resume 30 seconds after lab started
-    const youtubeUrl = `https://www.youtube.com/watch?v=${labData.videoId}&t=${resumeTimestamp}s`
     
-    window.open(youtubeUrl, '_blank')
+    // Try to communicate with original YouTube tab via window.opener
+    if (window.opener && !window.opener.closed) {
+      console.log('🔄 [Lab] Sending reverse sync to YouTube tab, resume at:', resumeTimestamp);
+      
+      window.opener.postMessage({
+        type: 'GENAI_LABS_CONTINUE_VIDEO',
+        videoId: labData.videoId,
+        timestamp: resumeTimestamp
+      }, '*');
+      
+      // Try to focus the YouTube tab
+      try {
+        window.opener.focus();
+        console.log('✅ [Lab] Focused YouTube tab');
+      } catch (e) {
+        console.log('⚠️ [Lab] Could not focus YouTube tab:', e);
+      }
+      
+      // Show feedback and close after delay
+      alert('Returning to video...');
+      setTimeout(() => {
+        window.close();
+      }, 500);
+      
+    } else {
+      // Fallback: Original tab was closed, open new YouTube tab
+      console.log('⚠️ [Lab] window.opener not available, opening new tab');
+      const youtubeUrl = `https://www.youtube.com/watch?v=${labData.videoId}&t=${resumeTimestamp}s`;
+      window.open(youtubeUrl, '_blank');
+    }
   }
 
   return (
@@ -155,7 +182,8 @@ export default function LabRunner({ labData }: LabRunnerProps) {
             {hasVideoContext && (
               <button
                 onClick={handleContinueVideo}
-                className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold"
+                title="Return to video at next section"
               >
                 <Video className="w-4 h-4" />
                 <span>Continue Video</span>
@@ -164,14 +192,14 @@ export default function LabRunner({ labData }: LabRunnerProps) {
             )}
             <button
               onClick={() => setShowHint(!showHint)}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
             >
               <Lightbulb className="w-4 h-4" />
               <span>Hint</span>
             </button>
             <button
               onClick={handleReset}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Reset</span>
@@ -179,7 +207,7 @@ export default function LabRunner({ labData }: LabRunnerProps) {
             <button
               onClick={handleRunCode}
               disabled={isRunning}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
             >
               {isRunning ? (
                 <>
